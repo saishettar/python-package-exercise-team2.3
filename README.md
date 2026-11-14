@@ -1,5 +1,9 @@
 # Python Package Exercise
 
+## Pypi
+
+[Team2-Virtual-Pet 0.1.0](https://pypi.org/project/Team2-Virtual-Pet/0.1.0/)
+
 ![Tests](https://github.com/software-students-fall2026/python-package-exercise-team2.3/actions/workflows/build.yaml/badge.svg)
 
 **This team used an extension**
