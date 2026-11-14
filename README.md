@@ -8,9 +8,9 @@
 
 You will need python 3.13 or 3.14, and Pipenv to use this package. Run these commands in your terminal to install.
 
-'''
+```bash
 pip install Team2-Virtual-Pet==0.1.0
-'''
+```
 
 ## Use MyVirtualPet
 
