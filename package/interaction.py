@@ -2,6 +2,10 @@
 import time
 from pathlib import Path
 
+from datetime import datetime, timezone
+
+from .death import check_death
+from .health import update_health
 from .display import show_pet
 from .energy import restore_energy
 from .history import get_history
@@ -185,15 +189,102 @@ def pass_time(pet):
     return minutes
 
 
+def check_saved_death(pet, now=None):
+    """Check if the pet died using its saved last_seen time."""
+
+    if now is None:
+        now = int(time.time())
+
+    last_seen = pet.get("last_seen")
+
+    if last_seen is None:
+        return check_death(pet)
+
+    last_date = datetime.fromtimestamp(
+        last_seen, timezone.utc
+    ).isoformat()
+
+    current_date = datetime.fromtimestamp(
+        now, timezone.utc
+    )
+
+    return check_death(pet, last_date, current_date)
+
+
+def check_saved_death(pet, now=None):
+    """Check death using the pet's saved last_seen time."""
+
+    if now is None:
+        now = int(time.time())
+
+    last_seen = pet.get("last_seen")
+
+    if last_seen is None:
+        return check_death(pet)
+
+    last_date = datetime.fromtimestamp(
+        last_seen, timezone.utc
+    ).isoformat()
+
+    current_date = datetime.fromtimestamp(
+        now, timezone.utc
+    )
+
+    return check_death(pet, last_date, current_date)
+
+
+def replace_dead_pet(pet):
+    """Display a dead pet and let the user create a new one."""
+
+    save_pet(pet, SAVE_FILE)
+
+    draw_screen(
+        pet,
+        f"{BOLD}{pet['name']} has died!{UNBOLD}",
+        MENU_LINES
+    )
+
+    input("Press Enter to create a new Tamagotchi...")
+
+    new_pet = create_pet()
+    save_pet(new_pet, SAVE_FILE)
+
+    return new_pet
+
 # Primary function
 def main():
     print(f"{BOLD}{COLOR}{INTRO}{UNBOLD}")
     pet, message = get_pet()
 
+     # Check for death when the program first opens
+    if check_saved_death(pet):
+        pet = replace_dead_pet(pet)
+        message = f"Say hi to {pet['name']}!"
+
     while True:
+
+        # Check before updating last_seen
+        if check_saved_death(pet):
+            pet = replace_dead_pet(pet)
+            message = f"Say hi to {pet['name']}!"
+            continue
+
         minutes = pass_time(pet)
+
+        # Update health after time passes
+        if minutes:
+            update_health(pet)
+            save_pet(pet, SAVE_FILE)
+
+        # Check for death after health changes
+        if check_saved_death(pet):
+            pet = replace_dead_pet(pet)
+            message = f"Say hi to {pet['name']}!"
+            continue
+
         if minutes:
             message = f"{BOLD}{minutes} minute(s) passed. {pet['name']} grew hungrier and more tired.{UNBOLD}"
+        
         draw_screen(pet, message, MENU_LINES)
         choice = input("> ").strip()
         if choice == "1":
