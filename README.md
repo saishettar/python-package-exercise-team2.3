@@ -12,6 +12,10 @@
 
 You will need python 3.13 or 3.14, and Pipenv to use this package. Run these commands in your terminal to install.
 
+```bash
+pip install Team2-Virtual-Pet==0.1.0
+```
+
 ## Use MyVirtualPet
 
 Care for your virtual pet through feeding, resting, playing, and cleaning. Check up on its health to make sure you’re fulfilling all of its needs! Use the menu provided when the file is run to navigate your pet-interaction options.
