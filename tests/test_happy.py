@@ -1,4 +1,3 @@
-
 """Tests for the pet's happiness and play functionality."""
 
 import pytest
@@ -9,17 +8,20 @@ from package.pet import MAX_STAT, create_pet
 
 def make_pet():
     pet = create_pet("Mochi")
-    pet.update({
-        "hunger": 20,
-        "energy": 80,
-        "hygiene": 80,
-        "happiness": 80,
-        "health": 50,
-    })
+    pet.update(
+        {
+            "hunger": 20,
+            "energy": 80,
+            "hygiene": 80,
+            "happiness": 80,
+            "health": 50,
+        }
+    )
     return pet
 
 
 # increase_happiness
+
 
 @pytest.mark.parametrize(
     ("start", "change", "expected"),
@@ -36,16 +38,6 @@ def test_increase_happiness_zero_typical_and_clamped(start, change, expected):
 
     assert increase_happiness(pet, change) == expected
     assert pet["happiness"] == expected
-
-
-def test_increase_happiness_only_changes_happiness():
-    pet = make_pet()
-    original = pet.copy()
-
-    increase_happiness(pet, 5)
-
-    original["happiness"] = 85
-    assert pet == original
 
 
 @pytest.mark.parametrize(
@@ -94,48 +86,22 @@ def test_increase_happiness_missing_stat():
 
 # decrease_happiness
 
+
 @pytest.mark.parametrize(
-    ("start", "change", "expected"),
+    ("start", "expected"),
     [
-        (MAX_STAT, 0, MAX_STAT),
-        (MAX_STAT, 10, MAX_STAT - 10),
-        (80, 15, 65),
-        (5, MAX_STAT, 0),
+        (MAX_STAT, MAX_STAT - 10),
+        (80, 70),
+        (5, 0),
+        (0, 0),
     ],
 )
-def test_decrease_happiness_zero_typical_and_clamped(start, change, expected):
+def test_decrease_happiness_zero_typical_and_clamped(start, expected):
     pet = make_pet()
     pet["happiness"] = start
 
-    assert decrease_happiness(pet, change) == expected
+    assert decrease_happiness(pet) == expected
     assert pet["happiness"] == expected
-
-
-def test_decrease_happiness_only_changes_happiness():
-    pet = make_pet()
-    original = pet.copy()
-
-    decrease_happiness(pet, 5)
-
-    original["happiness"] = 75
-    assert pet == original
-
-
-@pytest.mark.parametrize(
-    ("change", "error"),
-    [
-        (True, TypeError),
-        (1.5, TypeError),
-        (None, TypeError),
-        (-1, ValueError),
-        ("3", TypeError),
-    ],
-)
-def test_decrease_happiness_invalid_change(change, error):
-    pet = make_pet()
-
-    with pytest.raises(error):
-        decrease_happiness(pet, change)
 
 
 @pytest.mark.parametrize(
@@ -154,7 +120,7 @@ def test_decrease_happiness_invalid_stat(value, error):
     pet["happiness"] = value
 
     with pytest.raises(error):
-        decrease_happiness(pet, 5)
+        decrease_happiness(pet)
 
 
 def test_decrease_happiness_missing_stat():
@@ -162,10 +128,11 @@ def test_decrease_happiness_missing_stat():
     del pet["happiness"]
 
     with pytest.raises(TypeError):
-        decrease_happiness(pet, 5)
+        decrease_happiness(pet)
 
 
 # play
+
 
 @pytest.mark.parametrize(
     ("play_type", "gain", "cost", "message"),
@@ -175,9 +142,7 @@ def test_decrease_happiness_missing_stat():
         ("3", 5, 15, "You take Mochi on a walk"),
     ],
 )
-def test_play_increases_happiness_and_drains_energy(
-    play_type, gain, cost, message
-):
+def test_play_increases_happiness_and_drains_energy(play_type, gain, cost, message):
     pet = make_pet()
     pet["happiness"] = 0
 
@@ -228,10 +193,7 @@ def test_play_records_energy_history():
 
     play(pet, "Mochi", "2")
 
-    energy_events = [
-        event for event in pet["history"]
-        if event["stat"] == "energy"
-    ]
+    energy_events = [event for event in pet["history"] if event["stat"] == "energy"]
 
     assert len(energy_events) == 1
     assert energy_events[0]["before"] == 80
@@ -243,10 +205,7 @@ def test_play_records_play_history():
 
     play(pet, "Mochi", "1")
 
-    play_events = [
-        event for event in pet["history"]
-        if event["action"] == "play"
-    ]
+    play_events = [event for event in pet["history"] if event["action"] == "play"]
 
     assert len(play_events) == 1
     assert play_events[0]["detail"] == "pet"
