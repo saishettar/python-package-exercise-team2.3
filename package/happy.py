@@ -1,4 +1,3 @@
-
 from .pet import clamp, check_count, check_pet
 from .history import record_event
 from .energy import drain_energy
@@ -17,9 +16,12 @@ def play(pet, name, play_type):
         increase_happiness(pet, 15)
         drain_energy(pet, 5)
         record_event(
-            pet, "play", detail="pet",
-            stat="happiness", before=before,
-            after=pet["happiness"]
+            pet,
+            "play",
+            detail="pet",
+            stat="happiness",
+            before=before,
+            after=pet["happiness"],
         )
         return f"\033[1m*You pet {name}, they love it!*\033[0m"
 
@@ -28,9 +30,12 @@ def play(pet, name, play_type):
         increase_happiness(pet, 10)
         drain_energy(pet, 10)
         record_event(
-            pet, "play", detail="catch",
-            stat="happiness", before=before,
-            after=pet["happiness"]
+            pet,
+            "play",
+            detail="catch",
+            stat="happiness",
+            before=before,
+            after=pet["happiness"],
         )
         return f"\033[1m*You throw a ball to {name}, they catch it and happily bring it back to you!*\033[0m"
 
@@ -39,9 +44,12 @@ def play(pet, name, play_type):
         increase_happiness(pet, 5)
         drain_energy(pet, 15)
         record_event(
-            pet, "play", detail="walk",
-            stat="happiness", before=before,
-            after=pet["happiness"]
+            pet,
+            "play",
+            detail="walk",
+            stat="happiness",
+            before=before,
+            after=pet["happiness"],
         )
         return f"\033[1m*You take {name} on a walk, they smile the entire time!*\033[0m"
 
@@ -57,9 +65,8 @@ def increase_happiness(pet, happiness_change):
     return pet["happiness"]
 
 
-def decrease_happiness(pet, happiness_change):
-    """Decrement pet happiness by specified amount."""
+def decrease_happiness(pet):
+    """Decrement pet happiness by 10 for every non-play interaction (feed, clean, rest)."""
     check_pet(pet, "happiness")
-    check_count(happiness_change, "happiness_change")
-    pet["happiness"] = clamp(pet["happiness"] - happiness_change)
+    pet["happiness"] = clamp(pet["happiness"] - 10)
     return pet["happiness"]
