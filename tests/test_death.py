@@ -7,7 +7,7 @@ from package.pet import create_pet
 
 
 def test_pet_alive():
-    pet = create_pet("Buddy")
+    pet = create_pet("Mochi")
 
     assert check_death(pet) is False
     assert pet["alive"] is True
@@ -15,7 +15,7 @@ def test_pet_alive():
 
 
 def test_death_from_health():
-    pet = create_pet("Buddy")
+    pet = create_pet("Mochi")
     pet["health"] = 10
 
     assert check_death(pet) is True
@@ -24,7 +24,7 @@ def test_death_from_health():
 
 
 def test_death_below_threshold():
-    pet = create_pet("Buddy")
+    pet = create_pet("Mochi")
     pet["health"] = 5
 
     assert check_death(pet) is True

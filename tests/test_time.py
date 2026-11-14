@@ -1,4 +1,3 @@
-
 import pytest
 
 from package.history import get_history
